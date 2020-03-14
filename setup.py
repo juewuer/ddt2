@@ -2,7 +2,7 @@
 # # coding: utf-8
 
 from setuptools import setup
-from ddt import __version__
+from ddt2 import __version__
 
 setup(
     name='ddt2',
