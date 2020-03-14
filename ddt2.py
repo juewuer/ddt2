@@ -138,7 +138,10 @@ def mk_test_name(name, value, index=0):
         # fallback for python2
         value = value.encode('ascii', 'backslashreplace')
     test_name = "{0}_{1}_{2}".format(name, index, value)
-    return re.sub(r'\W|^(?=\d)', '_', test_name)
+    test_name = re.sub(r'\W|^(?=\d)', '_', test_name)
+    test_name = re.sub(r'_+', '_', test_name)
+    test_name = re.sub(r'_$', '', test_name)
+    return test_name    
 
 
 def feed_data(func, new_name, test_data_docstring, *args, **kwargs):
