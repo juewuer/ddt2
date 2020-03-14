@@ -10,6 +10,7 @@ import json
 import os
 import re
 import codecs
+import copy
 from functools import wraps
 
 try:
@@ -19,7 +20,7 @@ except ImportError:  # pragma: no cover
 else:
     _have_yaml = True
 
-__version__ = '1.3.0'
+__version__ = '1.3.0.1'
 
 # These attributes will not conflict with any real python attribute
 # They are added to the decorated test method and processed later
@@ -110,7 +111,7 @@ def file_data(value, yaml_loader=None):
     return wrapper
 
 
-def mk_test_name(name, value, index=0):
+def mk_test_name(name, value, index=0,func=None):
     """
     Generate a new name for a test case.
 
@@ -129,19 +130,50 @@ def mk_test_name(name, value, index=0):
     """
 
     # Add zeros before index to keep order
-    index = "{0:0{1}}".format(index + 1, index_len)
-    if not is_trivial(value):
-        return "{0}_{1}".format(name, index)
-    try:
-        value = str(value)
-    except UnicodeEncodeError:
-        # fallback for python2
-        value = value.encode('ascii', 'backslashreplace')
-    test_name = "{0}_{1}_{2}".format(name, index, value)
-    test_name = re.sub(r'\W|^(?=\d)', '_', test_name)
-    test_name = re.sub(r'_+', '_', test_name)
-    test_name = re.sub(r'_$', '', test_name)
-    return test_name    
+    if func is None:
+        index = "{0:0{1}}".format(index + 1, index_len)
+        if not is_trivial(value):
+            return "{0}_{1}".format(name, index)
+        try:
+            value = str(value)
+        except UnicodeEncodeError:
+            # fallback for python2
+            value = value.encode('ascii', 'backslashreplace')
+        test_name = "{0}_{1}_{2}".format(name, index, value)
+        test_name = re.sub(r'\W|^(?=\d)', '_', test_name)
+        test_name = re.sub(r'_+', '_', test_name)
+        test_name = re.sub(r'_$', '', test_name)
+        return test_name
+    else:
+        index = "{0:0{1}}".format(index + 1, index_len)
+        values_default = copy.deepcopy(list(value))
+        values_name = list(func.__code__.co_varnames[1:func.__code__.co_argcount])
+        if not is_trivial(value):
+            return "{0}_{1}".format(name, index)
+        try:
+            value = str(value)
+        except UnicodeEncodeError:
+            value = value.encode('ascii', 'backslashreplace')
+        if len(values_default)+1 < func.__code__.co_argcount:
+            values_default.extend(func.__defaults__[func.__code__.co_argcount-1-len(values_default):])
+        values_name.append("i")
+        values_default.append(index)
+        test_name = name
+        founded = False
+        for i, var in enumerate(values_name):
+            holder = "__%s__"%(str(var))
+            if holder in test_name:
+                test_name = test_name.replace(holder,str(values_default[i]))
+                founded = True
+        
+        if not founded:
+            test_name = "{0}_{1}_{2}".format(test_name, index, value)
+            
+        print(test_name, (name, index, value))
+        test_name = re.sub(r'\W|^(?=\d)', '_', test_name)
+        test_name = re.sub(r'_+', '_', test_name)
+        test_name = re.sub(r'_$', '', test_name)
+        return test_name    
 
 
 def feed_data(func, new_name, test_data_docstring, *args, **kwargs):
@@ -179,6 +211,8 @@ def add_test(cls, test_name, test_docstring, func, *args, **kwargs):
     name.
 
     """
+    if hasattr(cls, test_name):
+        raise ValueError("%s have already have test function %s" % (cls.__name__, test_name))
     setattr(cls, test_name, feed_data(func, test_name, test_docstring,
             *args, **kwargs))
 
@@ -293,7 +327,7 @@ def ddt(cls):
     for name, func in list(cls.__dict__.items()):
         if hasattr(func, DATA_ATTR):
             for i, v in enumerate(getattr(func, DATA_ATTR)):
-                test_name = mk_test_name(name, getattr(v, "__name__", v), i)
+                test_name = mk_test_name(name, getattr(v, "__name__", v), i, func)
                 test_data_docstring = _get_test_data_docstring(func, v)
                 if hasattr(func, UNPACK_ATTR):
                     if isinstance(v, tuple) or isinstance(v, list):
