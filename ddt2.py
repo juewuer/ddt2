@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# This file is a part of DDT (https://github.com/datadriventests/ddt)
-# Copyright 2012-2015 Carles Barrobés and DDT contributors
+# This file is a part of DDT (https://github.com/juewuer/ddt2)
+# Copyright 2012-2020 Juewuer and DDT contributors
 # For the exact contribution history, see the git revision log.
-# DDT is licensed under the MIT License, included in
-# https://github.com/datadriventests/ddt/blob/master/LICENSE.md
+# DDT2 is licensed under the MIT License, included in
+# https://github.com/juewuer/ddt2/blob/master/LICENSE.md
 
 import inspect
 import json

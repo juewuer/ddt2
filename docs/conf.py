@@ -47,7 +47,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'DDT'
+project = u'DDT2'
 # pylint: disable-msg=W0622
 # - copyright is a builtin
 copyright = u'2012, Carles Barrobés'
@@ -56,7 +56,7 @@ copyright = u'2012, Carles Barrobés'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 
-from ddt import __version__
+from ddt2 import __version__
 # The short X.Y version.
 version = __version__
 # The full version, including alpha/beta/rc tags.

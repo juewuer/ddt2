@@ -5,6 +5,6 @@ python:
 install: pip install -r requirements/test.txt
 
 script:
-    - nosetests --with-cov --cover-package=ddt
-    - flake8 ddt.py test
+    - nosetests --with-cov --cover-package=ddt2
+    - flake8 ddt2.py test
     - codecov

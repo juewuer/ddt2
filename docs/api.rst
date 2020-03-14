@@ -1,5 +1,5 @@
 API
 ===
 
-.. automodule:: ddt
+.. automodule:: ddt2
     :members:

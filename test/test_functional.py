@@ -9,7 +9,7 @@ try:
 except ImportError:
     import mock
 
-from ddt import ddt, data, file_data
+from ddt2 import ddt, data, file_data
 from nose.tools import (
     assert_true, assert_equal, assert_is_not_none, assert_raises
 )

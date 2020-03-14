@@ -1,11 +1,11 @@
-# Contributing to DDT
+# Contributing to DDT2
 
 ## Guidelines
 
-We'll be happy if you want to contribute to the improvement of `ddt`.
+We'll be happy if you want to contribute to the improvement of `ddt2`.
 
 Code contributions will take the form of pull requests to
-[the github repo](https://github.com/datadriventests/ddt).
+[the github repo](https://github.com/juewuer/ddt2).
 
 Your PRs are more likely to be merged quickly if:
 
@@ -14,9 +14,9 @@ Your PRs are more likely to be merged quickly if:
 
 ## Building
 
-PRs to `ddt` are always built by Travis-CI on Python 2 and 3.
+PRs to `ddt2` are always built by Travis-CI on Python 2 and 3.
 
-If you want to build `ddt` locally, the simplest way is to use `tox`:
+If you want to build `ddt2` locally, the simplest way is to use `tox`:
 
 ```
 pip install tox

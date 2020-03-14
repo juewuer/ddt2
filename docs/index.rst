@@ -27,4 +27,4 @@ Indices and tables
 * :ref:`search`
 
 
-.. _Github: https://github.com/datadriventests/ddt
+.. _Github: https://github.com/juewuer/ddt2

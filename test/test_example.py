@@ -1,6 +1,6 @@
 import unittest
 
-from ddt import ddt, data, file_data, unpack
+from ddt2 import ddt, data, file_data, unpack
 from test.mycode import larger_than_two, has_three_elements, is_a_greeting
 
 try:

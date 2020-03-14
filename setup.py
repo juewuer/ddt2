@@ -5,14 +5,14 @@ from setuptools import setup
 from ddt import __version__
 
 setup(
-    name='ddt',
+    name='ddt2',
     description='Data-Driven/Decorated Tests',
     long_description='A library to multiply test cases',
     version=__version__,
-    author='Carles Barrobés',
-    author_email='carles@barrobes.com',
-    url='https://github.com/datadriventests/ddt',
-    py_modules=['ddt'],
+    author='Carles Barrobés, Juewuer',
+    author_email='@qq.com',
+    url='https://github.com/juewuer/ddt2',
+    py_modules=['ddt2'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
