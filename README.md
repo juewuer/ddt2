@@ -23,6 +23,7 @@ I Modify ddt to ddt2 for i want to get some features, and not all functions of d
 1. support for __var__  to generate case 
 1. support for __i__ to have index
 1. parameter in a test function should not have i
+1. add function decorators autoindex
 
 
   

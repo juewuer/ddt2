@@ -30,6 +30,7 @@ DATA_ATTR = '%values'              # store the data the test must run with
 FILE_ATTR = '%file_path'           # store the path to JSON file
 YAML_LOADER_ATTR = '%yaml_loader'  # store custom yaml loader for serialization
 UNPACK_ATTR = '%unpack'            # remember that we have to unpack values
+AUTOINDEX_ATTR = '%autoindex'            # remember that we have to unpack values
 index_len = 5                      # default max length of case index
 
 
@@ -54,7 +55,14 @@ def unpack(func):
     """
     setattr(func, UNPACK_ATTR, True)
     return func
+    
+def autoindex(func):
+    """
+    Method decorator to add unpack feature.
 
+    """
+    setattr(func, AUTOINDEX_ATTR, True)
+    return func
 
 def data(*values):
     """
@@ -153,23 +161,33 @@ def mk_test_name(name, value, index=0,func=None):
         try:
             value = str(value)
         except UnicodeEncodeError:
+            # fallback for python2
             value = value.encode('ascii', 'backslashreplace')
+        
+        #print(values_default,len(values_default),func.__code__.co_argcount,func.__code__.co_varnames)
         if len(values_default)+1 < func.__code__.co_argcount:
             values_default.extend(func.__defaults__[func.__code__.co_argcount-1-len(values_default):])
         values_name.append("i")
         values_default.append(index)
+        #print("values_default: ",values_default)
+        #print(list(enumerate(func.__code__.co_varnames[1:func.__code__.co_argcount])))
         test_name = name
         founded = False
+            
         for i, var in enumerate(values_name):
+            #print("to test  __%s__"%(str(var)),"__%s__"%(str(var)) in test_name)
             holder = "__%s__"%(str(var))
             if holder in test_name:
+                #print("get %s, set to %s"%( holder, str(values_default[i])) )
                 test_name = test_name.replace(holder,str(values_default[i]))
                 founded = True
-        
+        #print("if founded: ",founded)
         if not founded:
             test_name = "{0}_{1}_{2}".format(test_name, index, value)
+        elif hasattr(func, AUTOINDEX_ATTR) and "__i__" not in name:
+            test_name += "_%s"%str(index)
             
-        print(test_name, (name, index, value))
+        #print(test_name, (name, index, value))
         test_name = re.sub(r'\W|^(?=\d)', '_', test_name)
         test_name = re.sub(r'_+', '_', test_name)
         test_name = re.sub(r'_$', '', test_name)
