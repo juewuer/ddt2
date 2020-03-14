@@ -10,7 +10,7 @@ setup(
     long_description='A library to multiply test cases',
     version=__version__,
     author='Carles Barrobés, Juewuer',
-    author_email='@qq.com',
+    author_email='lihechao@gmail.com',
     url='https://github.com/juewuer/ddt2',
     py_modules=['ddt2'],
     classifiers=[
