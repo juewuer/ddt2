@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
 else:
     _have_yaml = True
 
-__version__ = '11.3.0'
+__version__ = '11.3.0.1'
 
 # These attributes will not conflict with any real python attribute
 # They are added to the decorated test method and processed later
@@ -154,7 +154,10 @@ def mk_test_name(name, value, index=0,func=None):
         return test_name
     else:
         index = "{0:0{1}}".format(index + 1, index_len)
-        values_default = copy.deepcopy(list(value))
+        if type(value) == type([]) or type(value) == (()):
+            values_default = copy.deepcopy(list(value))
+        else:
+            values_default = [value]
         values_name = list(func.__code__.co_varnames[1:func.__code__.co_argcount])
         if not is_trivial(value):
             return "{0}_{1}".format(name, index)
@@ -182,10 +185,11 @@ def mk_test_name(name, value, index=0,func=None):
                 test_name = test_name.replace(holder,str(values_default[i]))
                 founded = True
         #print("if founded: ",founded)
-        if not founded:
-            test_name = "{0}_{1}_{2}".format(test_name, index, value)
-        elif hasattr(func, AUTOINDEX_ATTR) and "__i__" not in name:
+        if hasattr(func, AUTOINDEX_ATTR) and "__i__" not in name:
             test_name += "_%s"%str(index)
+        elif not founded:
+            test_name = "{0}_{1}_{2}".format(test_name, index, value)
+
             
         #print(test_name, (name, index, value))
         test_name = re.sub(r'\W|^(?=\d)', '_', test_name)
