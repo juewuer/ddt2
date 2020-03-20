@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
 else:
     _have_yaml = True
 
-__version__ = '11.3.0.1'
+__version__ = '11.3.0.2'
 
 # These attributes will not conflict with any real python attribute
 # They are added to the decorated test method and processed later
@@ -154,7 +154,7 @@ def mk_test_name(name, value, index=0,func=None):
         return test_name
     else:
         index = "{0:0{1}}".format(index + 1, index_len)
-        if type(value) == type([]) or type(value) == (()):
+        if type(value) == type([]) or type(value) == type(()):
             values_default = copy.deepcopy(list(value))
         else:
             values_default = [value]
