@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
 else:
     _have_yaml = True
 
-__version__ = '11.3.0.2'
+__version__ = '11.3.0.3'
 
 # These attributes will not conflict with any real python attribute
 # They are added to the decorated test method and processed later
@@ -28,6 +28,7 @@ __version__ = '11.3.0.2'
 
 DATA_ATTR = '%values'              # store the data the test must run with
 FILE_ATTR = '%file_path'           # store the path to JSON file
+FILE_EXTR_ATTR = 'Sheet1'      # for excel, store sheet name
 YAML_LOADER_ATTR = '%yaml_loader'  # store custom yaml loader for serialization
 UNPACK_ATTR = '%unpack'            # remember that we have to unpack values
 AUTOINDEX_ATTR = '%autoindex'            # remember that we have to unpack values
@@ -89,7 +90,7 @@ def idata(iterable):
     return wrapper
 
 
-def file_data(value, yaml_loader=None):
+def file_data(value, yaml_loader=None, sheet="Sheet1"):
     """
     Method decorator to add to your test methods.
 
@@ -112,6 +113,9 @@ def file_data(value, yaml_loader=None):
     method.
     """
     def wrapper(func):
+        if value.endswith('xlsx'):
+            setattr(func, FILE_EXTR_ATTR, sheet)
+            print(sheet, func)
         setattr(func, FILE_ATTR, value)
         if yaml_loader:
             setattr(func, YAML_LOADER_ATTR, yaml_loader)
@@ -273,17 +277,35 @@ def process_file_data(cls, name, func, file_attr):
             None
         )
         return
-
-    with codecs.open(data_file_path, 'r', 'utf-8') as f:
-        # Load the data from YAML or JSON
-        if _is_yaml_file:
-            if hasattr(func, YAML_LOADER_ATTR):
-                yaml_loader = getattr(func, YAML_LOADER_ATTR)
-                data = yaml.load(f, Loader=yaml_loader)
+    if data_file_path.endswith((".xlsx")):
+        from openpyxl import load_workbook
+        sheetName= getattr(func, FILE_EXTR_ATTR)
+        wb = load_workbook(data_file_path)
+        print("Currentsheet: ", sheetName)
+        ws = wb[sheetName]
+        rowNum = ws.max_row
+        colNum = ws.max_column
+        keys = next(ws.values)
+        values = list(ws.values)[1:]
+        if rowNum > 1:
+            data = []
+            for row in list(range(2, rowNum+1)):
+                s = {}
+                s['rowNum'] = row
+                for i, key in enumerate(keys):
+                    s[keys[i]] = values[row-2][i]
+                data.append(s)
+    else:
+        with codecs.open(data_file_path, 'r', 'utf-8') as f:
+            # Load the data from YAML or JSON
+            if _is_yaml_file:
+                if hasattr(func, YAML_LOADER_ATTR):
+                    yaml_loader = getattr(func, YAML_LOADER_ATTR)
+                    data = yaml.load(f, Loader=yaml_loader)
+                else:
+                    data = yaml.safe_load(f)
             else:
-                data = yaml.safe_load(f)
-        else:
-            data = json.load(f)
+                data = json.load(f)
 
     _add_tests_from_data(cls, name, func, data)
 
