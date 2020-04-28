@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
 else:
     _have_yaml = True
 
-__version__ = '11.3.0.3'
+__version__ = '11.3.0.4'
 
 # These attributes will not conflict with any real python attribute
 # They are added to the decorated test method and processed later
@@ -290,6 +290,8 @@ def process_file_data(cls, name, func, file_attr):
         if rowNum > 1:
             data = []
             for row in list(range(2, rowNum+1)):
+                if not any(values[row-2]):
+                    continue
                 s = {}
                 s['rowNum'] = row
                 for i, key in enumerate(keys):

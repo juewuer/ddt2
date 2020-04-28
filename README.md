@@ -27,6 +27,12 @@ I Modify ddt to ddt2 for i want to get some features, and not all functions of d
 1. add function decorators autoindex
 1. @data_file add xlsx support, for example @data_file("a.xlsx", sheet="Sheet2"), if this feature used, openpyxl must be installed
 
+# update
+## 11.3.0.4
+- 2020-4-28
+- if all grid in a line is blank, it should not return
+
+
 
 
   
